@@ -8,13 +8,13 @@
 	</listeners>
 
 	<test name="Hub Spot Functional Regression Test - chrome"
-		thread-count="5" parallel="methods">
+		thread-count="5" parallel="classes">
 		<parameter name="browser" value="chrome" />
 
 		<classes>
 			<class name="com.qa.hubspot.tests.LoginPageTest" />
-		<!-- 	<class name="com.qa.hubspot.tests.HomePageTest" />
-			<class name="com.qa.hubspot.tests.ContactsPageTest" /> -->
+			<class name="com.qa.hubspot.tests.HomePageTest" />
+			<class name="com.qa.hubspot.tests.ContactsPageTest" />
 		</classes>
 	</test>
 
