@@ -9,6 +9,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.qa.hubspot.base.BasePage;
@@ -32,29 +33,37 @@ public class LoginPageTest {
 	LoginPage loginPage;
 	Credentials userCred;
 
-	@BeforeMethod(alwaysRun =true)
-	public void setUp() {
+	@BeforeMethod(alwaysRun = true)
+	@Parameters(value = { "browser" })
+	public void setUp(String browser) {
+		String browserName = null;
 		basePage = new BasePage();
 		prop = basePage.init_properties();
-		String browserName = prop.getProperty("browser");
+
+		if (browser.equals(null)) {
+			browserName = prop.getProperty("browser");
+		} else {
+			browserName = browser;
+		}
 		driver = basePage.init_driver(browserName);
+
 		driver.get(prop.getProperty("url"));
 
 		loginPage = new LoginPage(driver);
-		userCred =new Credentials(prop.getProperty("username"), prop.getProperty("password"));
+		userCred = new Credentials(prop.getProperty("username"), prop.getProperty("password"));
 	}
 
 	@Test(priority = 1)
 	@Description("Verify loginPage title test..")
 	@Severity(SeverityLevel.NORMAL)
 	public void verifyLoginPageTitleTest() {
-	
+
 		String title = loginPage.getPageTitle();
 		System.out.println("login page title is : " + title);
 		Assert.assertEquals(title, AppConstants.LOGIN_PAGE_TITLE);
 	}
 
-	@Test(priority = 2, groups ="sanity")
+	@Test(priority = 2, groups = "sanity")
 	@Description("Verify Sign up link test..")
 	@Severity(SeverityLevel.CRITICAL)
 	public void verifySignUpLinkTest() {
@@ -71,16 +80,13 @@ public class LoginPageTest {
 	}
 
 	@DataProvider
-	public Object[][] getLoginInvalidData(){
-		Object data[][] = {	{"test1111@gmail.com","test123"},
-							{"test2222@gmail.com","test1234"},
-							{"test33333@gmail.com","test12345"},
-							{"testasda","testasda"},
-							{" "," "}
-							};
-		return data;						
+	public Object[][] getLoginInvalidData() {
+		Object data[][] = { { "test1111@gmail.com", "test123" }, { "test2222@gmail.com", "test1234" },
+				{ "test33333@gmail.com", "test12345" }, { "testasda", "testasda" }, { " ", " " } };
+		return data;
 	}
-	@Test(priority = 4, dataProvider = "getLoginInvalidData", enabled=false)
+
+	@Test(priority = 4, dataProvider = "getLoginInvalidData", enabled = false)
 	public void loginTest_InvalidCredentials(String username, String pwd) {
 		userCred.setAppUsername(username);
 		userCred.setAppPassword(pwd);
@@ -88,7 +94,7 @@ public class LoginPageTest {
 		Assert.assertTrue(loginPage.checkLoginErrorMessage());
 	}
 
-	@AfterMethod(alwaysRun =true)
+	@AfterMethod(alwaysRun = true)
 	public void tearDown() {
 		driver.quit();
 	}
